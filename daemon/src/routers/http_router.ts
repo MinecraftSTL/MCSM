@@ -4,7 +4,6 @@ import fs from "fs-extra";
 import path from "path";
 import { DAEMON_INDEX_HTML } from "../const/index_html";
 import FileWriter from "../entity/file_writer";
-import Instance from "../entity/instance/instance";
 import { $t } from "../i18n";
 import { missionPassport } from "../service/mission_passport";
 import FileManager from "../service/system_file";
@@ -12,35 +11,7 @@ import InstanceSubsystem from "../service/system_instance";
 import uploadManager from "../service/upload_manager";
 import { clearUploadFiles } from "../tools/filepath";
 import { sendFile } from "../utils/speed_limit";
-
-// Helper function to normalize path for comparison
-function normalizePath(p: string): string {
-  return p.replace(/\\/g, "/").replace(/\/+/g, "/").replace(/\/$/, "");
-}
-
-// Helper function to check if a path is locked
-function isPathLocked(instance: Instance, targetPath: string): boolean {
-  const lockedFiles = instance.config.lockedFiles || [];
-  if (lockedFiles.length === 0) return false;
-
-  const normalizedTarget = normalizePath(targetPath);
-
-  for (const lockedPath of lockedFiles) {
-    const normalizedLocked = normalizePath(lockedPath);
-
-    // Check if target is exactly the locked path
-    if (normalizedTarget === normalizedLocked) {
-      return true;
-    }
-
-    // Check if target is inside a locked directory
-    if (normalizedTarget.startsWith(normalizedLocked + "/")) {
-      return true;
-    }
-  }
-
-  return false;
-}
+import { isPathLocked } from "../service/file_lock_service";
 
 const router = new Router();
 

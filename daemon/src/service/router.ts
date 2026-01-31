@@ -71,6 +71,12 @@ export function navigation(socket: Socket) {
   routerApp.emitRouter("connection", ctx, null);
 }
 
+// Import middlewares
+import fileLockMiddleware from "../middlewares/file_lock";
+
+// Register file lock middleware
+routerApp.use(fileLockMiddleware);
+
 // The authentication routing order must be the first load. These routing orders cannot be changed without authorization
 import "../routers/auth_router";
 import "../routers/environment_router";
